@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import * as React from 'react'
 import { Text, TextInput, Button } from 'react-native'
 import { t } from '../language-pack/language'
+import auth from '@react-native-firebase/auth';
 
 const Root = styled.View`
   flex : 1;
@@ -13,6 +14,11 @@ const Root = styled.View`
 const Title = styled(Text)`
     font-size:20px;
     color:black;
+`
+
+const WarningMessage = styled(Text)`
+    font-size:14px;
+    color:red;
 `
 
 const Input = styled(TextInput)`
@@ -26,7 +32,6 @@ const Input = styled(TextInput)`
 
 const InputField = styled.View`
     margin:12px;
-
 `
 
 const ButtonContainer = styled.View`
@@ -36,11 +41,48 @@ const ButtonContainer = styled.View`
 export const RegisterScreen = observer(({ navigation }) => {
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
+    const [validEmail, setValidEmail] = React.useState<Boolean>(true)
+    const [ValidPassword, setValidPassword] = React.useState<Boolean>(true)
+    const [firebaseMessage, setFirebaseMessage] = React.useState("")
 
     const handleRegister = React.useCallback(() => {
-        console.log('123')
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+        if (reg.test(email) === false) {
+            console.log("Email is Not Correct");
+            setValidEmail(false)
+
+            if (password === "" || password.length < 6) {
+                setValidPassword(false)
+                return
+            }
+            return
+        }
+
+        if (password === "" || password.length < 6) {
+            setValidPassword(false)
+            return
+        }
+
+        setValidEmail(true)
+        setValidPassword(true)
+
+        auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                setFirebaseMessage(t.registerScreen.successMessage);
+            })
+            .catch(error => {
+                if (error.code === 'auth/email-already-in-use') {
+                    setFirebaseMessage(t.registerScreen.duplicatedEmailWarning);
+                }
+
+                setFirebaseMessage(error)
+                console.error(error);
+            });
+
+
     }
-        , [])
+        , [email, password])
 
     return (
         <Root>
@@ -50,6 +92,7 @@ export const RegisterScreen = observer(({ navigation }) => {
                     onChangeText={setEmail}
                     value={email}
                 />
+                {validEmail === false && <WarningMessage>{t.registerScreen.successMessage}</WarningMessage>}
             </InputField>
             <InputField>
                 <Title>{t.registerScreen.password}</Title>
@@ -57,10 +100,12 @@ export const RegisterScreen = observer(({ navigation }) => {
                     onChangeText={setPassword}
                     value={password}
                 />
+                {ValidPassword === false && <WarningMessage>{t.registerScreen.nonValidPasswordWarning}</WarningMessage>}
             </InputField>
             <ButtonContainer>
                 <Button title={t.profileScreen.register} onPress={handleRegister} />
             </ButtonContainer>
+            <WarningMessage>{firebaseMessage}</WarningMessage>
         </Root>
     );
 

@@ -8,7 +8,11 @@ export const en = {
     registerScreen: {
         title: "Register Page",
         email: "Please enter your email",
-        password: "Please enter your password"
+        password: "Please enter your password",
+        successMessage: "User account created & signed in!",
+        duplicatedEmailWarning: "That email address is already in use!",
+        nonValidEmailWarning: "This is not a valid Email Address",
+        nonValidPasswordWarning: "This is not a valid Password"
     },
     profileScreen: {
         title: "Profile",
