@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import * as React from 'react';
 import { Text, Button } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import { t } from '../language-pack/language';
 
 const Root = styled.View`
   flex : 1;
@@ -33,12 +34,12 @@ export const ProfileScreen = observer(({ navigation }) => {
   }, []);
 
   const handleLogin = React.useCallback(() => {
-    navigation.navigate('Login')
+    navigation.navigate(t.profileScreen.login)
   }
     , [])
 
   const handleRegister = React.useCallback(() => {
-    navigation.navigate('Register')
+    navigation.navigate(t.profileScreen.register)
   }
     , [])
 
@@ -46,16 +47,16 @@ export const ProfileScreen = observer(({ navigation }) => {
     initializing ? null :
       user != null ?
         <Root>
-          < Text > Welcome {user.email}</Text >
+          < Text >{t.profileScreen.welcomeMessage}{user.email}</Text >
         </Root >
         :
         <Root>
-          <Text>Please Login</Text>
+          <Text>{t.profileScreen.loginHints}</Text>
           <ButtonContainer>
-            <LoginButton title="Login" onPress={handleLogin} />
+            <LoginButton title={t.profileScreen.login} onPress={handleLogin} />
           </ButtonContainer>
           <ButtonContainer>
-            <RegisterButton title="Register" onPress={handleRegister} />
+            <RegisterButton title={t.profileScreen.register} onPress={handleRegister} />
           </ButtonContainer>
         </Root>
 
