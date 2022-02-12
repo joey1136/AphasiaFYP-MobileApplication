@@ -15,10 +15,6 @@ const ButtonContainer = styled.View`
   padding:10px;
 `
 
-const LoginButton = styled(Button)``
-
-const RegisterButton = styled(Button)``
-
 export const ProfileScreen = observer(({ navigation }) => {
   const [initializing, setInitializing] = React.useState(true);
   const [user, setUser] = React.useState(undefined);
@@ -43,20 +39,31 @@ export const ProfileScreen = observer(({ navigation }) => {
   }
     , [])
 
+  const handleLogout = React.useCallback(() => {
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+  }
+    , [])
+
+  if (user != null) {
+    console.log(user.uid)
+  }
   return (
     initializing ? null :
       user != null ?
         <Root>
           < Text >{t.profileScreen.welcomeMessage}{user.email}</Text >
+          <Button title={t.profileScreen.logout} onPress={handleLogout} />
         </Root >
         :
         <Root>
           <Text>{t.profileScreen.loginHints}</Text>
           <ButtonContainer>
-            <LoginButton title={t.profileScreen.login} onPress={handleLogin} />
+            <Button title={t.profileScreen.login} onPress={handleLogin} />
           </ButtonContainer>
           <ButtonContainer>
-            <RegisterButton title={t.profileScreen.register} onPress={handleRegister} />
+            <Button title={t.profileScreen.register} onPress={handleRegister} />
           </ButtonContainer>
         </Root>
 

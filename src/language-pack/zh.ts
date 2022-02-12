@@ -3,7 +3,8 @@ export const zh = {
         title: "主頁"
     },
     loginScreen: {
-        title: "登入"
+        title: "登入",
+        successMessage: "已經成功登入!",
     },
     registerScreen: {
         title: "註冊",
@@ -19,7 +20,12 @@ export const zh = {
         welcomeMessage: "歡迎",
         loginHints: "請先登入或註冊",
         login: "登入",
-        register: "註冊"
+        register: "註冊",
+        logout: "登出"
+
+    },
+    uploadScreen: {
+        title: "Upload",
     }
 
 }

@@ -3,7 +3,8 @@ export const en = {
         title: "Home Screen"
     },
     loginScreen: {
-        title: "Login Page"
+        title: "Login Page",
+        successMessage: "User account signed in!",
     },
     registerScreen: {
         title: "Register Page",
@@ -19,7 +20,10 @@ export const en = {
         welcomeMessage: "Welcome",
         loginHints: "Please Login",
         login: "Login",
-        register: "Register"
+        register: "Register",
+        logout: "Logout"
+    },
+    uploadScreen: {
+        title: "Upload",
     }
-
 }
