@@ -46,9 +46,6 @@ export const ProfileScreen = observer(({ navigation }) => {
   }
     , [])
 
-  if (user != null) {
-    console.log(user.uid)
-  }
   return (
     initializing ? null :
       user != null ?

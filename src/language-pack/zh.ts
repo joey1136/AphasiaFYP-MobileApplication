@@ -26,6 +26,7 @@ export const zh = {
     },
     uploadScreen: {
         title: "Upload",
+        Object: [{ title: "Photo Frame", description: "Please select your image to put on the photo frame", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
     }
 
 }
