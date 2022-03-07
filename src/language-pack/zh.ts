@@ -36,9 +36,11 @@ export const zh = {
     customizedScreen: {
         title: "上傳自定義題目",
         Object: [{ title: "相簿封面", description: "請上傳一張照片作為相簿封面", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
-        Question: "題目",
-        Answer: "答案",
-        Image: "照片",
+        instructionQuestion: "訓練前的加油訊息",
+        instructionQuestionDescription: "這個訊息將會於每次訓練前播放一次，預設訊息是 \"你好\"",
+        question: "題目",
+        answer: "答案",
+        image: "照片",
     }
 
 }

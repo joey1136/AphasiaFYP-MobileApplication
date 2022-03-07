@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react'
 import styled from 'styled-components'
 import * as React from 'react';
-import { Text, Button, Image, ScrollView, SafeAreaView, TextInput } from 'react-native';
+import { Text, Button, Image, ScrollView, SafeAreaView, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { t } from '../language-pack/language'
 import { ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
@@ -65,10 +65,12 @@ const UploadObjectImage = styled(Image)`
 
 const SuccessMessage = styled(Text)`
   color:green;
+  text-align:center;
 `
 
 const WarningMessage = styled(Text)`
   color:red;
+  text-align:center;
 `
 
 const QuestionInputContainer = styled.View`
@@ -86,8 +88,40 @@ const QuestionInput = styled(TextInput)`
   width:80%;
 `
 
+const InstructionQuestionInput = styled(TextInput)`
+  height: 40px;
+  margin-bottom: 12px;
+  border-bottom-width: 1px;
+`
+
+const SaveButtonContainer = styled.View`
+
+`
+
+const SaveButton = styled(TouchableOpacity)`
+  padding:15px;
+  border-radius:50px;
+  background-color:lightgrey;
+  z-index:-1;
+`
 const SaveIcon = styled(MaterialCommunityIcon)`
-  font-size:25px;
+  font-size:30px;
+`
+
+const ModalContainer = styled(TouchableOpacity)`
+  height:100%;
+  width:100%;
+  justify-content : center;
+  display:flex;
+  align-items:center;
+  background-color:rgba(0, 0, 0, 0.8);
+
+`
+
+const FullSceneImage = styled(Image)`
+  width:90%;
+  height:60%;
+  justify-content : center;
 `
 
 export const CustomizedScreen = observer(({ navigation }) => {
@@ -97,6 +131,8 @@ export const CustomizedScreen = observer(({ navigation }) => {
   const [question, setQuestion] = React.useState(undefined)
   const [instructionQuestion, setInstructionQuestion] = React.useState(undefined)
   const [coverImageUrl, setCoverImageUrl] = React.useState(undefined)
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalImageUrl, setModalImageUrl] = React.useState(undefined);
 
   React.useEffect(() => {
     const user = auth().currentUser
@@ -162,26 +198,28 @@ export const CustomizedScreen = observer(({ navigation }) => {
       setSuccessMessage(undefined)
       return
     }
-
-    const reference = storage().ref(`/${user.uid}/image/${objectName}.png`);
+    const date = (new Date()).toLocaleDateString().split('/').join('-') + "_" + (new Date()).toLocaleTimeString().split('/').join('-');
+    console.log(date)
+    const reference = storage().ref(`/${user.uid}/image/${objectName}_${date}.png`);
     await reference.putFile(Image.assets[0].uri);
-    console.log(reference.getDownloadURL());
-    setSuccessMessage("Upload successfully")
+    console.log(reference.getDownloadURL().toString())
+    setCoverImageUrl((await reference.getDownloadURL()).toString())
+    setSuccessMessage("Image Upload successfully")
     setWarningMessage(undefined)
   }
     , [])
 
   const QuestionsUI = React.useMemo(() => question?.map((it, index) => <UploadCard>
-    <UploadObjectTitle>{t.customizedScreen.Question}{index + 1}</UploadObjectTitle>
+    <UploadObjectTitle>{t.customizedScreen.question}{index + 1}</UploadObjectTitle>
     <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.Question}:</UploadObjectDiscription>
+      <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
       <QuestionInput
         value={it.question}
         onChangeText={(text) => UpdateQuestion(index, "quesiton", text)}
       />
     </QuestionInputContainer>
     <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.Answer}:</UploadObjectDiscription>
+      <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
       <QuestionInput
         value={it.answer}
         onChangeText={(text) => UpdateQuestion(index, "answer", text)}
@@ -193,22 +231,37 @@ export const CustomizedScreen = observer(({ navigation }) => {
 
   const UploadQuestions = React.useCallback(() => {
     const user = auth().currentUser
-    if (user == null) return
+    if (!user) {
+      setWarningMessage("Please first Login before upload")
+      setSuccessMessage(undefined)
+      return
+    }
     if (question == null) return
     const reference = firebase
       .app().database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
-      .ref(`/customizedQuestion/${user.uid}/questions`);
+      .ref(`/customizedQuestion/${user.uid}`);
 
-    reference.set(question)
-      .then(() => console.log('Data set.', question[0].question));
-  }, [question])
+    reference.set({
+      coverImageLink: coverImageUrl,
+      instructionQuestion: instructionQuestion,
+      totalQuestions: question.length,
+      questions: question
+    })
+      .then(() => {
+        console.log('Data set.')
+      });
+  }, [question, coverImageUrl, instructionQuestion])
 
+  console.log(coverImageUrl)
   return <SafeAreaView >
     <ScrollView >
       <Root>
-        <SaveIcon name="content-save" onPress={UploadQuestions} />
-        {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
-        {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
+        <SaveButtonContainer>
+          <SaveButton onPress={UploadQuestions}>
+            <SaveIcon name="content-save" />
+          </SaveButton>
+        </SaveButtonContainer>
+
         {Objects.map((it) =>
           <UploadCard>
             <UploadObjectTitle>{it.title}</UploadObjectTitle>
@@ -218,19 +271,54 @@ export const CustomizedScreen = observer(({ navigation }) => {
                 source={{
                   uri: it.url,
                 }}
+                resizeMode="contain"
               />
+              {coverImageUrl != null && <Text onPress={() => {
+                setModalVisible(true)
+
+              }}>History Upload</Text>}
               <UploadButtonGroup>
                 <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(it.title)} />
                 <Button title={t.uploadScreen.select} onPress={() => handleUploadImage(it.title)} />
               </UploadButtonGroup>
 
+              {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
+              {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
             </UploadCardContent>
           </UploadCard>)}
+        <UploadCard>
+          <UploadObjectTitle>{t.customizedScreen.instructionQuestion}</UploadObjectTitle>
+          <UploadObjectDiscription>{t.customizedScreen.instructionQuestionDescription}</UploadObjectDiscription>
+          <InstructionQuestionInput
+            value={instructionQuestion}
+            onChangeText={setInstructionQuestion}
+          />
+        </UploadCard>
         {QuestionsUI}
 
       </Root>
     </ScrollView>
 
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        console.log("Modal close")
+        setModalVisible(false)
+      }}
+    >
+      <ModalContainer onPress={() => setModalVisible(false)}>
+        <FullSceneImage
+          source={{
+            uri: coverImageUrl,
+          }}
+          resizeMode="contain"
+        />
+      </ModalContainer>
+    </Modal>
   </SafeAreaView>
+
+
 }
 );

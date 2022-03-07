@@ -35,8 +35,10 @@ export const en = {
     customizedScreen: {
         title: "Upload For Customized Album",
         Object: [{ title: "Book Cover", description: "Please select your image to put on the Book Cover", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
-        Question: "Question",
-        Answer: "Answer",
-        Image: "Image",
+        instructionQuestion: "Welcome message for your family",
+        instructionQuestionDescription: "This message will play at the beginning of every training. Default Message is \"Hello\"",
+        question: "Question",
+        answer: "Answer",
+        image: "Image",
     }
 }
