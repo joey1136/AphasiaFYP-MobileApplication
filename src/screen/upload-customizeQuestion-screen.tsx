@@ -7,6 +7,7 @@ import { ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-nat
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import { firebase } from '@react-native-firebase/database';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface Question {
   question: string
@@ -85,6 +86,10 @@ const QuestionInput = styled(TextInput)`
   width:80%;
 `
 
+const SaveIcon = styled(MaterialCommunityIcon)`
+  font-size:25px;
+`
+
 export const CustomizedScreen = observer(({ navigation }) => {
   const [warningMessage, setWarningMessage] = React.useState(undefined)
   const [successMessage, setSuccessMessage] = React.useState(undefined)
@@ -112,6 +117,14 @@ export const CustomizedScreen = observer(({ navigation }) => {
       });
 
   }, []);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <SaveIcon name="content-save" onPress={() => console.log(123)} />
+      ),
+    });
+  }, [navigation]);
 
   const UpdateQuestion = React.useCallback((index: number, item: "quesiton" | "answer" | "url", value: string) => {
     if (question == null) return
@@ -223,8 +236,10 @@ export const CustomizedScreen = observer(({ navigation }) => {
             </UploadCardContent>
           </UploadCard>)}
         {QuestionsUI}
+
       </Root>
     </ScrollView>
+
   </SafeAreaView>
 }
 );
