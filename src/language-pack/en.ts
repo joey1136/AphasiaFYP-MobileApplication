@@ -1,6 +1,8 @@
 export const en = {
     homeScreen: {
-        title: "Home Screen"
+        title: "Home Screen",
+        upload: "Upload Images for Computerized Training",
+        upload2: "Upload Images for Customized Album"
     },
     loginScreen: {
         title: "Login Page",
@@ -18,6 +20,7 @@ export const en = {
     profileScreen: {
         title: "Profile",
         welcomeMessage: "Welcome",
+        loginCodeMessage: "Your Unity Login Code",
         loginHints: "Please Login",
         login: "Login",
         register: "Register",
@@ -25,6 +28,15 @@ export const en = {
     },
     uploadScreen: {
         title: "Upload",
+        select: "Select",
+        takeImage: "Take Picture",
         Object: [{ title: "Photo Frame", description: "Please select your image to put on the photo frame", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+    },
+    customizedScreen: {
+        title: "Upload For Customized Album",
+        Object: [{ title: "Book Cover", description: "Please select your image to put on the Book Cover", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+        Question: "Question",
+        Answer: "Answer",
+        Image: "Image",
     }
 }

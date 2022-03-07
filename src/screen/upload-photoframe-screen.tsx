@@ -21,12 +21,13 @@ const UploadObjectTitle = styled(Text)`
 const UploadObjectDiscription = styled(Text)`
   font-size:16px
   color:black;
+  padding-bottom:15px;
 `
 
 const UploadCard = styled.View`
   width:95%;
   background-color:lightgrey;
-  padding:5px;
+  padding:15px;
   margin:10px;
   border:1px solid black;
   display:flex;
@@ -35,19 +36,23 @@ const UploadCard = styled.View`
 
 const UploadCardContent = styled.View`
   display:flex;
-  flex-direction: row;
+  flex-direction: column;
+
 `
 
 
 const UploadButtonGroup = styled.View`
-  align-items : center;
-  justify-content : center;
+  display:flex;
+  flex-direction: row;  
+  justify-content : space-between;
+  padding:15px;
 
 `
 
 const UploadObjectImage = styled(Image)`
-  width:200px;
+  width:100%;
   height:200px;
+  justify-content : center;
 `
 
 const SuccessMessage = styled(Text)`
@@ -111,8 +116,8 @@ export const UploadScreen = observer(({ navigation }) => {
             }}
           />
           <UploadButtonGroup>
-            <Button title="take picture" onPress={() => handleTakeImage(it.title)} />
-            <Button title="upload" onPress={() => handleUpload(it.title)} />
+            <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(it.title)} />
+            <Button title={t.uploadScreen.select} onPress={() => handleUpload(it.title)} />
           </UploadButtonGroup>
         </UploadCardContent>
       </UploadCard>)}

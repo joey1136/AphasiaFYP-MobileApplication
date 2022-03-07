@@ -11,14 +11,20 @@ const Root = styled.View`
 `
 
 export const HomeScreen = observer(({ navigation }) => {
-  const handleUpload = React.useCallback(() => {
+  const handleUploadForObject = React.useCallback(() => {
     navigation.navigate(t.uploadScreen.title)
+  }
+    , [])
+
+  const handleUploadForCustmoizedQuestions = React.useCallback(() => {
+    navigation.navigate(t.customizedScreen.title)
   }
     , [])
 
   return <Root>
     <Text>{t.homeScreen.title}</Text>
-    <Button title="Upload new image" onPress={handleUpload} />
+    <Button title={t.homeScreen.upload} onPress={handleUploadForObject} />
+    <Button title={t.homeScreen.upload2} onPress={handleUploadForCustmoizedQuestions} />
   </Root>
 }
 );
