@@ -41,6 +41,7 @@ export const zh = {
         question: "題目",
         answer: "答案",
         image: "照片",
+        history: "歷史上傳記錄",
     }
 
 }

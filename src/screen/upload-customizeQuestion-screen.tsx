@@ -77,7 +77,7 @@ const QuestionInputContainer = styled.View`
   display:flex;
   flex-direction:row;
   align-items:center;
-  justify-content:space-around;
+  justify-content:space-between;
   padding-top:12px;
 `
 
@@ -122,6 +122,14 @@ const FullSceneImage = styled(Image)`
   width:90%;
   height:60%;
   justify-content : center;
+`
+
+const ImageHistoryUpload = styled(Text)`
+  font-size:16px
+  color:black;
+  width:80%;
+  padding-bottom:15px;
+  color:grey;
 `
 
 export const CustomizedScreen = observer(({ navigation }) => {
@@ -171,27 +179,27 @@ export const CustomizedScreen = observer(({ navigation }) => {
   }, [question])
 
   const Objects = t.customizedScreen.Object
-  const handleUploadImage = React.useCallback(async (objectName: string) => {
+  const handleUploadImage = React.useCallback(async (objectName: string, index?: number) => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
       includeBase64: false,
     });
-    uploadImage(objectName, result)
+    if (result.didCancel) return
+    uploadImage(objectName, result, index)
   }
     , [])
 
-  const handleTakeImage = React.useCallback(async (objectName: string) => {
+  const handleTakeImage = React.useCallback(async (objectName: string, index?: number) => {
     const result = await launchCamera({
       mediaType: 'photo',
-
       includeBase64: false,
     });
-    console.log(result)
-    uploadImage(objectName, result)
+    if (result.didCancel) return
+    uploadImage(objectName, result, index)
   }
     , [])
 
-  const uploadImage = React.useCallback(async (objectName: string, Image: ImagePickerResponse) => {
+  const uploadImage = React.useCallback(async (objectName: string, Image: ImagePickerResponse, index?: number) => {
     const user = auth().currentUser
     if (!user) {
       setWarningMessage("Please first Login before upload")
@@ -199,35 +207,21 @@ export const CustomizedScreen = observer(({ navigation }) => {
       return
     }
     const date = (new Date()).toLocaleDateString().split('/').join('-') + "_" + (new Date()).toLocaleTimeString().split('/').join('-');
-    console.log(date)
     const reference = storage().ref(`/${user.uid}/image/${objectName}_${date}.png`);
     await reference.putFile(Image.assets[0].uri);
-    console.log(reference.getDownloadURL().toString())
-    setCoverImageUrl((await reference.getDownloadURL()).toString())
+    const link = (await reference.getDownloadURL()).toString()
+    if (objectName === "Book Cover" || objectName === "相簿封面") {
+      setCoverImageUrl(link)
+    } else {
+      if (index != null) {
+        UpdateQuestion(index, "url", link)
+      }
+    }
+
     setSuccessMessage("Image Upload successfully")
     setWarningMessage(undefined)
   }
     , [])
-
-  const QuestionsUI = React.useMemo(() => question?.map((it, index) => <UploadCard>
-    <UploadObjectTitle>{t.customizedScreen.question}{index + 1}</UploadObjectTitle>
-    <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
-      <QuestionInput
-        value={it.question}
-        onChangeText={(text) => UpdateQuestion(index, "quesiton", text)}
-      />
-    </QuestionInputContainer>
-    <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
-      <QuestionInput
-        value={it.answer}
-        onChangeText={(text) => UpdateQuestion(index, "answer", text)}
-      />
-    </QuestionInputContainer>
-  </UploadCard>
-  )
-    , [question])
 
   const UploadQuestions = React.useCallback(() => {
     const user = auth().currentUser
@@ -252,7 +246,49 @@ export const CustomizedScreen = observer(({ navigation }) => {
       });
   }, [question, coverImageUrl, instructionQuestion])
 
-  console.log(coverImageUrl)
+  const QuestionsUI = React.useMemo(() => question?.map((it, index) => <UploadCard>
+    <UploadObjectTitle>{t.customizedScreen.question}{index + 1}</UploadObjectTitle>
+    <QuestionInputContainer>
+      <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
+      <QuestionInput
+        value={it.question}
+        onChangeText={(text) => UpdateQuestion(index, "quesiton", text)}
+      />
+    </QuestionInputContainer>
+    <QuestionInputContainer>
+      <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
+      <QuestionInput
+        value={it.answer}
+        onChangeText={(text) => UpdateQuestion(index, "answer", text)}
+      />
+    </QuestionInputContainer>
+    <QuestionInputContainer>
+      <UploadObjectDiscription>{t.customizedScreen.image}:</UploadObjectDiscription>
+      {it?.imageLink != null && <ImageHistoryUpload onPress={() => {
+        setModalVisible(true)
+        setModalImageUrl(it.imageLink)
+
+      }}>{t.customizedScreen.history}</ImageHistoryUpload>}
+    </QuestionInputContainer>
+    <UploadButtonGroup>
+      <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
+      <Button title={t.uploadScreen.select} onPress={() => handleUploadImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
+    </UploadButtonGroup>
+
+  </UploadCard>
+  )
+    , [question])
+
+  const renderModalContent = React.useMemo(() =>
+    <FullSceneImage
+      source={{
+        uri: modalImageUrl,
+      }}
+      resizeMode="contain"
+    />
+    , [modalImageUrl])
+
+
   return <SafeAreaView >
     <ScrollView >
       <Root>
@@ -261,7 +297,8 @@ export const CustomizedScreen = observer(({ navigation }) => {
             <SaveIcon name="content-save" />
           </SaveButton>
         </SaveButtonContainer>
-
+        {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
+        {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
         {Objects.map((it) =>
           <UploadCard>
             <UploadObjectTitle>{it.title}</UploadObjectTitle>
@@ -275,15 +312,13 @@ export const CustomizedScreen = observer(({ navigation }) => {
               />
               {coverImageUrl != null && <Text onPress={() => {
                 setModalVisible(true)
+                setModalImageUrl(coverImageUrl)
 
-              }}>History Upload</Text>}
+              }}>{t.customizedScreen.history}</Text>}
               <UploadButtonGroup>
                 <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(it.title)} />
                 <Button title={t.uploadScreen.select} onPress={() => handleUploadImage(it.title)} />
               </UploadButtonGroup>
-
-              {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
-              {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
             </UploadCardContent>
           </UploadCard>)}
         <UploadCard>
@@ -304,18 +339,13 @@ export const CustomizedScreen = observer(({ navigation }) => {
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
-        console.log("Modal close")
         setModalVisible(false)
       }}
     >
       <ModalContainer onPress={() => setModalVisible(false)}>
-        <FullSceneImage
-          source={{
-            uri: coverImageUrl,
-          }}
-          resizeMode="contain"
-        />
+        {renderModalContent}
       </ModalContainer>
+
     </Modal>
   </SafeAreaView>
 

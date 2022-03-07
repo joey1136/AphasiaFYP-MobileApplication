@@ -40,5 +40,6 @@ export const en = {
         question: "Question",
         answer: "Answer",
         image: "Image",
+        history: "History Upload",
     }
 }
