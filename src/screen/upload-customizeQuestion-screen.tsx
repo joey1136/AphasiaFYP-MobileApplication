@@ -48,13 +48,10 @@ const UploadCardContent = styled.View`
 
 `
 
-
 const UploadButtonGroup = styled.View`
   display:flex;
   flex-direction: row;  
-  justify-content : space-between;
-  padding:15px;
-
+  gap:10px;
 `
 
 const UploadObjectImage = styled(Image)`
@@ -81,11 +78,12 @@ const QuestionInputContainer = styled.View`
   padding-top:12px;
 `
 
-const QuestionInput = styled(TextInput)`
+const QuestionInput = styled(TextInput) <{ $warning: boolean }>`
   height: 40px;
   margin-bottom: 12px;
   border-bottom-width: 1px;
   width:80%;
+  background-color: ${({ $warning }) => $warning ? "lightyellow" : undefined}
 `
 
 const InstructionQuestionInput = styled(TextInput)`
@@ -102,20 +100,28 @@ const SaveButton = styled(TouchableOpacity)`
   padding:15px;
   border-radius:50px;
   background-color:lightgrey;
-  z-index:-1;
 `
+
 const SaveIcon = styled(MaterialCommunityIcon)`
   font-size:30px;
 `
 
-const ModalContainer = styled(TouchableOpacity)`
+const OpacityModalContainer = styled(TouchableOpacity)`
   height:100%;
   width:100%;
   justify-content : center;
   display:flex;
   align-items:center;
   background-color:rgba(0, 0, 0, 0.8);
+`
 
+const ModalContainer = styled.View`
+  height:100%;
+  width:100%;
+  justify-content : center;
+  display:flex;
+  align-items:center;
+  background-color:rgba(0, 0, 0, 0.8);
 `
 
 const FullSceneImage = styled(Image)`
@@ -124,23 +130,56 @@ const FullSceneImage = styled(Image)`
   justify-content : center;
 `
 
-const ImageHistoryUpload = styled(Text)`
+const ImageHistoryUpload = styled(Text) <{ $warning: boolean }>`
   font-size:16px
   color:black;
-  width:80%;
+  width:40%;
   padding-bottom:15px;
   color:grey;
+  background-color: ${({ $warning }) => $warning ? "lightyellow" : undefined}
+`
+
+const QuestionTitleContainer = styled.View`
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+`
+
+const DeleteIcon = styled(MaterialCommunityIcon)`
+  font-size:25px;
+`
+
+const AddQuestionConfirmButtonContainer = styled.View`
+  padding-top:15px;
+`
+
+const UploadIcon = styled(MaterialCommunityIcon)`
+  font-size:30px;
+  padding-left:10px;
 `
 
 export const CustomizedScreen = observer(({ navigation }) => {
-  const [warningMessage, setWarningMessage] = React.useState(undefined)
-  const [successMessage, setSuccessMessage] = React.useState(undefined)
   const [totalQuestion, setTotalQuestion] = React.useState(0)
   const [question, setQuestion] = React.useState(undefined)
   const [instructionQuestion, setInstructionQuestion] = React.useState(undefined)
   const [coverImageUrl, setCoverImageUrl] = React.useState(undefined)
-  const [modalVisible, setModalVisible] = React.useState(false);
   const [modalImageUrl, setModalImageUrl] = React.useState(undefined);
+
+  const [newQuestion, setNewQuestion] = React.useState(undefined);
+  const [newQuestionAnswer, setNewQuestionAnswer] = React.useState(undefined);
+  const [newQuestionImagsUrl, setNewQuestionImageUrl] = React.useState(undefined);
+
+  const [newQuestionModalWarning, setNewQuestionModalWarning] = React.useState(false);
+  const [warning, setWarning] = React.useState(false);
+  const [warningMessage, setWarningMessage] = React.useState(undefined)
+  const [successMessage, setSuccessMessage] = React.useState(undefined)
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [addQuestionModalVisible, setAddQuestionModalVisible] = React.useState(false);
+  const [deleteQuestionModalVisible, setDeleteQuestionModalVisible] = React.useState(false);
+
+  const [deleteQuestionIndex, setDeleteQuestionIndex] = React.useState(undefined);
 
   React.useEffect(() => {
     const user = auth().currentUser
@@ -178,6 +217,51 @@ export const CustomizedScreen = observer(({ navigation }) => {
     setQuestion(newQuestion)
   }, [question])
 
+  const DeleteQuestion = React.useCallback((index: number) => {
+    if (question == null) return
+    var newQuestion = [...question]
+    newQuestion.splice(index, 1);
+    setQuestion(newQuestion)
+  }, [question])
+
+  const CheckQuestion = React.useCallback(() => {
+    var isWarning = false;
+    question?.forEach((it) => {
+      if (it.question == null || it.answer == null || it.imageLink == null || it.question == "" || it.answer == "" || it.imageLink == "") {
+        setWarning(true)
+        isWarning = true
+        return
+      }
+    })
+    if (!isWarning) {
+      setWarning(false)
+      UploadQuestions()
+    }
+  }, [question, coverImageUrl, instructionQuestion])
+
+  const UploadQuestions = React.useCallback(() => {
+    const user = auth().currentUser
+    if (!user) {
+      setWarningMessage("Please first Login before upload")
+      setSuccessMessage(undefined)
+      return
+    }
+    if (question == null) return
+    const reference = firebase
+      .app().database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
+      .ref(`/customizedQuestion/${user.uid}`);
+    reference.set({
+      coverImageLink: coverImageUrl,
+      instructionQuestion: instructionQuestion,
+      totalQuestions: question.length,
+      questions: question
+    })
+      .then(() => {
+        console.log('Data set.')
+        navigation.pop()
+      });
+  }, [question, coverImageUrl, instructionQuestion])
+
   const Objects = t.customizedScreen.Object
   const handleUploadImage = React.useCallback(async (objectName: string, index?: number) => {
     const result = await launchImageLibrary({
@@ -214,68 +298,63 @@ export const CustomizedScreen = observer(({ navigation }) => {
       setCoverImageUrl(link)
     } else {
       if (index != null) {
-        UpdateQuestion(index, "url", link)
+        if (index >= totalQuestion) {
+          setNewQuestionImageUrl(link)
+        } else {
+          UpdateQuestion(index, "url", link)
+        }
       }
     }
 
-    setSuccessMessage("Image Upload successfully")
+    setSuccessMessage(`${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
     setWarningMessage(undefined)
   }
     , [])
 
-  const UploadQuestions = React.useCallback(() => {
-    const user = auth().currentUser
-    if (!user) {
-      setWarningMessage("Please first Login before upload")
-      setSuccessMessage(undefined)
-      return
-    }
-    if (question == null) return
-    const reference = firebase
-      .app().database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
-      .ref(`/customizedQuestion/${user.uid}`);
+  const renderQuestionsCard = React.useMemo(() => question?.map((it, index) =>
+    <UploadCard>
+      <QuestionTitleContainer>
+        <UploadObjectTitle>{t.customizedScreen.question}{index + 1}</UploadObjectTitle>
+        <DeleteIcon name="delete" onPress={() => {
+          setDeleteQuestionIndex(index)
+          setDeleteQuestionModalVisible(true)
+        }} />
+      </QuestionTitleContainer>
+      <QuestionInputContainer>
+        <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
+        <QuestionInput
+          value={it.question}
+          onChangeText={(text) => UpdateQuestion(index, "quesiton", text)}
+          placeholder={t.customizedScreen.questionPlaceholder}
+          $warning={warning && it.question == null || it.question == ""}
+        />
+      </QuestionInputContainer>
+      <QuestionInputContainer>
+        <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
+        <QuestionInput
+          value={it.answer}
+          onChangeText={(text) => UpdateQuestion(index, "answer", text)}
+          placeholder={t.customizedScreen.answerPlaceholder}
+          $warning={warning && it.answer == null || it.answer == ""}
+        />
+      </QuestionInputContainer>
+      <QuestionInputContainer>
+        <UploadObjectDiscription>{t.customizedScreen.image}:</UploadObjectDiscription>
+        {it?.imageLink != null ?
+          <ImageHistoryUpload onPress={() => {
+            setModalVisible(true)
+            setModalImageUrl(it.imageLink)
 
-    reference.set({
-      coverImageLink: coverImageUrl,
-      instructionQuestion: instructionQuestion,
-      totalQuestions: question.length,
-      questions: question
-    })
-      .then(() => {
-        console.log('Data set.')
-      });
-  }, [question, coverImageUrl, instructionQuestion])
-
-  const QuestionsUI = React.useMemo(() => question?.map((it, index) => <UploadCard>
-    <UploadObjectTitle>{t.customizedScreen.question}{index + 1}</UploadObjectTitle>
-    <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
-      <QuestionInput
-        value={it.question}
-        onChangeText={(text) => UpdateQuestion(index, "quesiton", text)}
-      />
-    </QuestionInputContainer>
-    <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
-      <QuestionInput
-        value={it.answer}
-        onChangeText={(text) => UpdateQuestion(index, "answer", text)}
-      />
-    </QuestionInputContainer>
-    <QuestionInputContainer>
-      <UploadObjectDiscription>{t.customizedScreen.image}:</UploadObjectDiscription>
-      {it?.imageLink != null && <ImageHistoryUpload onPress={() => {
-        setModalVisible(true)
-        setModalImageUrl(it.imageLink)
-
-      }}>{t.customizedScreen.history}</ImageHistoryUpload>}
-    </QuestionInputContainer>
-    <UploadButtonGroup>
-      <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
-      <Button title={t.uploadScreen.select} onPress={() => handleUploadImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
-    </UploadButtonGroup>
-
-  </UploadCard>
+          }}>{t.customizedScreen.history}</ImageHistoryUpload>
+          :
+          <ImageHistoryUpload $warning={warning}>{t.customizedScreen.nohistory}</ImageHistoryUpload>
+        }
+        <UploadButtonGroup>
+          <UploadIcon name="camera" onPress={() => handleTakeImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
+          <UploadIcon name="upload" onPress={() => handleUploadImage(`${t.customizedScreen.question}${index + 1}${t.customizedScreen.image}`, index)} />
+        </UploadButtonGroup>
+      </QuestionInputContainer>
+    </UploadCard>
   )
     , [question])
 
@@ -289,11 +368,100 @@ export const CustomizedScreen = observer(({ navigation }) => {
     , [modalImageUrl])
 
 
+  const renderAddNewQuestionModalContent = React.useMemo(() =>
+    <ModalContainer>
+      <UploadCard>
+        <QuestionTitleContainer>
+          <UploadObjectTitle>{t.customizedScreen.new}{t.customizedScreen.question}{totalQuestion + 1}</UploadObjectTitle>
+          <DeleteIcon name="close" onPress={() => {
+            setAddQuestionModalVisible(false)
+            setNewQuestionModalWarning(false)
+          }
+          } />
+        </QuestionTitleContainer>
+        <QuestionInputContainer>
+          <UploadObjectDiscription>{t.customizedScreen.question}:</UploadObjectDiscription>
+          <QuestionInput
+            value={newQuestion}
+            onChangeText={setNewQuestion}
+            $warning={newQuestionModalWarning && newQuestion == null}
+            placeholder={t.customizedScreen.questionPlaceholder}
+          />
+        </QuestionInputContainer>
+        <QuestionInputContainer>
+          <UploadObjectDiscription>{t.customizedScreen.answer}:</UploadObjectDiscription>
+          <QuestionInput
+            value={newQuestionAnswer}
+            onChangeText={setNewQuestionAnswer}
+            $warning={newQuestionModalWarning && newQuestionAnswer == null}
+            placeholder={t.customizedScreen.answerPlaceholder}
+          />
+        </QuestionInputContainer>
+        <QuestionInputContainer>
+          <UploadObjectDiscription>{t.customizedScreen.image}:</UploadObjectDiscription>
+          {newQuestionImagsUrl != null
+            ?
+            <ImageHistoryUpload onPress={() => {
+              setModalVisible(true)
+              setModalImageUrl(newQuestionImagsUrl)
+            }}>{t.customizedScreen.history}</ImageHistoryUpload>
+            :
+            <ImageHistoryUpload $warning={newQuestionModalWarning}>{t.customizedScreen.nohistory}</ImageHistoryUpload>}
+          <UploadButtonGroup>
+            <UploadIcon name="camera" onPress={() => handleTakeImage(`${t.customizedScreen.question}${totalQuestion + 1}${t.customizedScreen.image}`, totalQuestion)} />
+            <UploadIcon name="upload" onPress={() => handleUploadImage(`${t.customizedScreen.question}${totalQuestion + 1}${t.customizedScreen.image}`, totalQuestion)} />
+          </UploadButtonGroup>
+        </QuestionInputContainer>
+        <AddQuestionConfirmButtonContainer>
+          <Button title={t.customizedScreen.confirm} onPress={() => {
+            if (newQuestion == null || newQuestionAnswer == null || newQuestionImagsUrl == null) {
+              setNewQuestionModalWarning(true)
+            } else {
+              var addQuestionSet = { question: newQuestion, answer: newQuestionAnswer, imageLink: newQuestionImagsUrl }
+              var newQuestionSet = [...question]
+              newQuestionSet.push(addQuestionSet)
+              setQuestion(newQuestionSet)
+              setAddQuestionModalVisible(false)
+              setTotalQuestion(totalQuestion + 1)
+              setNewQuestion(undefined)
+              setNewQuestionAnswer(undefined)
+              setNewQuestionImageUrl(undefined)
+              setNewQuestionModalWarning(false)
+            }
+          }} />
+        </AddQuestionConfirmButtonContainer>
+      </UploadCard>
+    </ModalContainer>
+    , [question, newQuestion, newQuestionAnswer, newQuestionImagsUrl, newQuestionModalWarning, totalQuestion])
+
+  const renderDeleteQuestionModalContent = React.useMemo(() =>
+    <ModalContainer>
+      <UploadCard>
+        <QuestionTitleContainer>
+          <UploadObjectTitle>{t.customizedScreen.deleteModalTitle}{deleteQuestionIndex + 1}?</UploadObjectTitle>
+          <DeleteIcon name="close" onPress={() => {
+            setDeleteQuestionModalVisible(false)
+            setDeleteQuestionIndex(undefined)
+          }
+          } />
+        </QuestionTitleContainer>
+        <AddQuestionConfirmButtonContainer>
+          <Button title={t.customizedScreen.confirm} onPress={() => {
+            setDeleteQuestionModalVisible(false)
+            DeleteQuestion(deleteQuestionIndex)
+            setDeleteQuestionIndex(undefined)
+          }} />
+        </AddQuestionConfirmButtonContainer>
+      </UploadCard>
+    </ModalContainer>
+    , [question, deleteQuestionIndex])
+
+
   return <SafeAreaView >
     <ScrollView >
       <Root>
         <SaveButtonContainer>
-          <SaveButton onPress={UploadQuestions}>
+          <SaveButton onPress={CheckQuestion}>
             <SaveIcon name="content-save" />
           </SaveButton>
         </SaveButtonContainer>
@@ -310,15 +478,20 @@ export const CustomizedScreen = observer(({ navigation }) => {
                 }}
                 resizeMode="contain"
               />
-              {coverImageUrl != null && <Text onPress={() => {
-                setModalVisible(true)
-                setModalImageUrl(coverImageUrl)
-
-              }}>{t.customizedScreen.history}</Text>}
-              <UploadButtonGroup>
-                <Button title={t.uploadScreen.takeImage} onPress={() => handleTakeImage(it.title)} />
-                <Button title={t.uploadScreen.select} onPress={() => handleUploadImage(it.title)} />
-              </UploadButtonGroup>
+              <QuestionInputContainer>
+                {coverImageUrl != null
+                  ?
+                  <Text onPress={() => {
+                    setModalVisible(true)
+                    setModalImageUrl(coverImageUrl)
+                  }}>{t.customizedScreen.history}</Text>
+                  :
+                  <ImageHistoryUpload $warning={newQuestionModalWarning}>{t.customizedScreen.nohistory}</ImageHistoryUpload>}
+                <UploadButtonGroup>
+                  <UploadIcon name="camera" onPress={() => handleTakeImage(it.title)} />
+                  <UploadIcon name="upload" onPress={() => handleUploadImage(it.title)} />
+                </UploadButtonGroup>
+              </QuestionInputContainer>
             </UploadCardContent>
           </UploadCard>)}
         <UploadCard>
@@ -329,11 +502,14 @@ export const CustomizedScreen = observer(({ navigation }) => {
             onChangeText={setInstructionQuestion}
           />
         </UploadCard>
-        {QuestionsUI}
-
+        {renderQuestionsCard}
+        <SaveButtonContainer>
+          <SaveButton onPress={() => setAddQuestionModalVisible(true)}>
+            <SaveIcon name="plus" />
+          </SaveButton>
+        </SaveButtonContainer>
       </Root>
     </ScrollView>
-
     <Modal
       animationType="slide"
       transparent={true}
@@ -342,10 +518,29 @@ export const CustomizedScreen = observer(({ navigation }) => {
         setModalVisible(false)
       }}
     >
-      <ModalContainer onPress={() => setModalVisible(false)}>
+      <OpacityModalContainer onPress={() => setModalVisible(false)}>
         {renderModalContent}
-      </ModalContainer>
-
+      </OpacityModalContainer>
+    </Modal>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={addQuestionModalVisible}
+      onRequestClose={() => {
+        setAddQuestionModalVisible(false)
+      }}
+    >
+      {renderAddNewQuestionModalContent}
+    </Modal>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={deleteQuestionModalVisible}
+      onRequestClose={() => {
+        setDeleteQuestionModalVisible(false)
+      }}
+    >
+      {renderDeleteQuestionModalContent}
     </Modal>
   </SafeAreaView>
 

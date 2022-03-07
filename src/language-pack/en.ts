@@ -38,8 +38,15 @@ export const en = {
         instructionQuestion: "Welcome message for your family",
         instructionQuestionDescription: "This message will play at the beginning of every training. Default Message is \"Hello\"",
         question: "Question",
+        questionPlaceholder: "Please enter question",
         answer: "Answer",
+        answerPlaceholder: "Please enter answer",
         image: "Image",
         history: "History Upload",
+        nohistory: "No History Upload",
+        confirm: "Confirm",
+        new: "New ",
+        uploadSuccess: " Upload successfully",
+        deleteModalTitle: "Do you confirm to delete Question",
     }
 }

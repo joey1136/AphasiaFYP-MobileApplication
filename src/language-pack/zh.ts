@@ -39,9 +39,16 @@ export const zh = {
         instructionQuestion: "訓練前的加油訊息",
         instructionQuestionDescription: "這個訊息將會於每次訓練前播放一次，預設訊息是 \"你好\"",
         question: "題目",
+        questionPlaceholder: "請輸入題目",
         answer: "答案",
+        answerPlaceholder: "請輸入答案",
         image: "照片",
         history: "歷史上傳記錄",
+        nohistory: "沒有歷史上傳記錄",
+        confirm: "確定",
+        new: "新增",
+        uploadSuccess: "上載成功",
+        deleteModalTitle: "你是否確定刪除問題",
     }
 
 }
