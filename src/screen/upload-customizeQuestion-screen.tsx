@@ -115,16 +115,9 @@ export const CustomizedScreen = observer(({ navigation }) => {
         setInstructionQuestion(JsonObject.instructionQuestion)
         setCoverImageUrl(JsonObject.coverImageLink)
       });
-
+    return
   }, []);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <SaveIcon name="content-save" onPress={() => console.log(123)} />
-      ),
-    });
-  }, [navigation]);
 
   const UpdateQuestion = React.useCallback((index: number, item: "quesiton" | "answer" | "url", value: string) => {
     if (question == null) return
@@ -178,21 +171,6 @@ export const CustomizedScreen = observer(({ navigation }) => {
   }
     , [])
 
-  const uploadQuestions = React.useCallback(async (objectName: string, Image: ImagePickerResponse) => {
-    const user = auth().currentUser
-    if (!user) {
-      setWarningMessage("Please first Login before upload")
-      setSuccessMessage(undefined)
-      return
-    }
-
-    const reference = storage().ref(`/${user.uid}/image/${objectName}.png`);
-    await reference.putFile(Image.assets[0].uri);
-    setSuccessMessage("Upload successfully")
-    setWarningMessage(undefined)
-  }
-    , [])
-
   const QuestionsUI = React.useMemo(() => question?.map((it, index) => <UploadCard>
     <UploadObjectTitle>{t.customizedScreen.Question}{index + 1}</UploadObjectTitle>
     <QuestionInputContainer>
@@ -213,9 +191,22 @@ export const CustomizedScreen = observer(({ navigation }) => {
   )
     , [question])
 
+  const UploadQuestions = React.useCallback(() => {
+    const user = auth().currentUser
+    if (user == null) return
+    if (question == null) return
+    const reference = firebase
+      .app().database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
+      .ref(`/customizedQuestion/${user.uid}/questions`);
+
+    reference.set(question)
+      .then(() => console.log('Data set.', question[0].question));
+  }, [question])
+
   return <SafeAreaView >
     <ScrollView >
       <Root>
+        <SaveIcon name="content-save" onPress={UploadQuestions} />
         {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
         {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
         {Objects.map((it) =>
