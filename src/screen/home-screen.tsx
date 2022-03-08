@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Text, Button, TouchableOpacity, Image } from 'react-native';
 import { t } from '../language-pack/language'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import auth from '@react-native-firebase/auth';
 
 const Root = styled.View`
   flex : 1;
@@ -52,18 +53,32 @@ const HelpIcon = styled(MaterialCommunityIcon)`
 `
 
 export const HomeScreen = observer(({ navigation }) => {
+  const user = auth().currentUser
+
   const handleUploadForObject = React.useCallback(() => {
-    navigation.navigate("HomePages", { screen: t.uploadScreen.title })
+    if (user == null) {
+      navigation.navigate(t.profileScreen.title)
+    } else {
+      navigation.navigate("HomePages", { screen: t.uploadScreen.title })
+    }
   }
     , [])
 
   const handleUploadForCustmoizedQuestions = React.useCallback(() => {
-    navigation.navigate("HomePages", { screen: t.customizedScreen.title })
+    if (user == null) {
+      navigation.navigate(t.profileScreen.title)
+    } else {
+      navigation.navigate("HomePages", { screen: t.customizedScreen.title })
+    }
   }
     , [])
 
   const handleCheckRecord = React.useCallback(() => {
-    navigation.navigate("HomePages", { screen: t.customizedTrainingRecord.title })
+    if (user == null) {
+      navigation.navigate(t.profileScreen.title)
+    } else {
+      navigation.navigate("HomePages", { screen: t.customizedTrainingRecord.title })
+    }
   }
     , [])
 
@@ -95,12 +110,9 @@ export const HomeScreen = observer(({ navigation }) => {
     </CardSet>
     <CardSet>
       <Card onPress={handleCheckRecord}>
-        <StyledImage
-          source={{
-            uri: "",
-          }}
-          resizeMode="contain"
-        />
+        <HelpIconContainer>
+          <HelpIcon name="help-circle" />
+        </HelpIconContainer>
         <CardTitle>{t.homeScreen.record}</CardTitle>
       </Card>
       <Card onPress={handleHelp}>
