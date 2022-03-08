@@ -8,6 +8,7 @@ export const en = {
     loginScreen: {
         title: "Login Page",
         successMessage: "User account signed in!",
+        wrongPasswordWarning: "Wrong Password!",
     },
     registerScreen: {
         title: "Register Page",

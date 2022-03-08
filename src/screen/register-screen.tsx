@@ -70,17 +70,16 @@ export const RegisterScreen = observer(({ navigation }) => {
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
                 setFirebaseMessage(t.registerScreen.successMessage);
+                console.log("CreateSuccess")
+                navigation.pop()
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {
                     setFirebaseMessage(t.registerScreen.duplicatedEmailWarning);
+                } else {
+                    setFirebaseMessage(error.code)
                 }
-
-                setFirebaseMessage(error)
-                console.error(error);
             });
-
-
     }
         , [email, password])
 

@@ -23,7 +23,7 @@ const WarningMessage = styled(Text)`
 
 const Input = styled(TextInput)`
     height:60px;
-    width:250px;
+    width:350px;
     border-width:1px;
     padding:10px;
     font-size:20px;
@@ -70,16 +70,16 @@ export const LoginScreen = observer(({ navigation }) => {
             .signInWithEmailAndPassword(email, password)
             .then(() => {
                 setFirebaseMessage(t.loginScreen.successMessage);
+                console.log("LoginSuccess")
+                navigation.pop()
             })
             .catch(error => {
-                if (error.code === 'auth/email-already-in-use') {
-                    setFirebaseMessage(t.registerScreen.duplicatedEmailWarning);
+                if (error.code === 'auth/wrong-password') {
+                    setFirebaseMessage(t.loginScreen.wrongPasswordWarning);
+                } else {
+                    setFirebaseMessage(error.code)
                 }
-
-                setFirebaseMessage(error)
-                console.error(error);
             });
-
 
     }
         , [email, password])

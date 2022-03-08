@@ -8,6 +8,7 @@ export const zh = {
     loginScreen: {
         title: "登入",
         successMessage: "已經成功登入!",
+        wrongPasswordWarning: "密碼錯誤!",
     },
     registerScreen: {
         title: "註冊",

@@ -53,7 +53,7 @@ const HelpIcon = styled(MaterialCommunityIcon)`
 `
 
 export const HomeScreen = observer(({ navigation }) => {
-  const user = auth().currentUser
+  const user = React.useMemo(() => auth().currentUser, [])
 
   const handleUploadForObject = React.useCallback(() => {
     if (user == null) {
