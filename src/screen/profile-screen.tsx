@@ -55,12 +55,12 @@ export const ProfileScreen = observer(({ navigation }) => {
 
 
   const handleLogin = React.useCallback(() => {
-    navigation.navigate(t.profileScreen.login)
+    navigation.navigate("ProfilePages", { screen: t.profileScreen.login })
   }
     , [])
 
   const handleRegister = React.useCallback(() => {
-    navigation.navigate(t.profileScreen.register)
+    navigation.navigate("ProfilePages", { screen: t.profileScreen.register })
   }
     , [])
 

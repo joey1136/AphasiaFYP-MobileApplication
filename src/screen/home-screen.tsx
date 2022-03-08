@@ -53,22 +53,22 @@ const HelpIcon = styled(MaterialCommunityIcon)`
 
 export const HomeScreen = observer(({ navigation }) => {
   const handleUploadForObject = React.useCallback(() => {
-    navigation.navigate(t.uploadScreen.title)
+    navigation.navigate("HomePages", { screen: t.uploadScreen.title })
   }
     , [])
 
   const handleUploadForCustmoizedQuestions = React.useCallback(() => {
-    navigation.navigate(t.customizedScreen.title)
+    navigation.navigate("HomePages", { screen: t.customizedScreen.title })
   }
     , [])
 
   const handleCheckRecord = React.useCallback(() => {
-    navigation.navigate(t.customizedTrainingRecord.title)
+    navigation.navigate("HomePages", { screen: t.customizedTrainingRecord.title })
   }
     , [])
 
   const handleHelp = React.useCallback(() => {
-    navigation.navigate(t.help.title)
+    navigation.navigate("HomePages", { screen: t.help.title })
   }
     , [])
 
