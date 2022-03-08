@@ -2,7 +2,8 @@ export const en = {
     homeScreen: {
         title: "Home Screen",
         upload: "Upload Images for Computerized Training",
-        upload2: "Upload Images for Customized Album"
+        upload2: "Upload Images and Questions for Customized Album",
+        record: "Check Training Record for Customized Album Training"
     },
     loginScreen: {
         title: "Login Page",
@@ -48,5 +49,11 @@ export const en = {
         new: "New ",
         uploadSuccess: " Upload successfully",
         deleteModalTitle: "Do you confirm to delete Question",
+    },
+    customizedTrainingRecord: {
+        title: "Check Record for Cusomized Album Training"
+    },
+    help: {
+        title: "Help"
     }
 }

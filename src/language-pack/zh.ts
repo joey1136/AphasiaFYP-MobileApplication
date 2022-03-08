@@ -2,7 +2,8 @@ export const zh = {
     homeScreen: {
         title: "主頁",
         upload: "上傳照片至口語理解及認知訓練",
-        upload2: "上傳照片至自定義相簿"
+        upload2: "上傳照片及題目至自定義相簿",
+        record: "查看自定義訓練的結果",
     },
     loginScreen: {
         title: "登入",
@@ -49,6 +50,11 @@ export const zh = {
         new: "新增",
         uploadSuccess: "上載成功",
         deleteModalTitle: "你是否確定刪除問題",
+    },
+    customizedTrainingRecord: {
+        title: "查看自定義訓練的結果"
+    },
+    help: {
+        title: "幫助"
     }
-
 }

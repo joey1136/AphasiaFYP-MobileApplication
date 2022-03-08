@@ -5,6 +5,8 @@ import { t } from '../language-pack/language';
 import { HomeScreen } from './home-screen';
 import { UploadScreen } from './upload-photoframe-screen';
 import { CustomizedScreen } from './upload-customizeQuestion-screen'
+import { CustomizedTrainingRecordScreen } from './customizeTrainingRecord-screen'
+import { HelpScreen } from './help-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,9 +16,10 @@ export const HomeNavigator = observer(() => {
             <Stack.Screen name={t.homeScreen.title} component={HomeScreen} />
             <Stack.Screen name={t.uploadScreen.title} component={UploadScreen} />
             <Stack.Screen name={t.customizedScreen.title} component={CustomizedScreen} />
+            <Stack.Screen name={t.customizedTrainingRecord.title} component={CustomizedTrainingRecordScreen} />
+            <Stack.Screen name={t.help.title} component={HelpScreen} />
         </Stack.Navigator>
     );
-
 }
 );
 
