@@ -13,6 +13,13 @@ const Root = styled.View`
     flex:1;
 `
 
+const NoRecordRoot = styled.View`
+    height:100%;
+    align-items:center;
+    flex:1;
+    justify-content:center;
+`
+
 const Placeholder = styled(Text)`
     font-size:18px;
     text-align:center;
@@ -117,7 +124,7 @@ const FullSceneImage = styled(Image)`
 `
 
 const ModalBackground = styled.View`
-    height:70%;
+    height:80%;
     width:80%;
     background-color:white;
 `
@@ -272,6 +279,7 @@ export const CustomizedTrainingRecordScreen = observer(() => {
                 <ModalContent>
                     <StyledScrollView>
                         <ModalText>{t.customizedTrainingRecord.tableTrainingTimeTitle} : {records[displayRecordIndex]?.trainingTime}</ModalText>
+                        <ModalText>{t.customizedTrainingRecord.correctRateTitle}: {records[displayRecordIndex]?.answers.filter((it) => it).length}/{records[displayRecordIndex]?.answers.length}</ModalText>
                         {records[displayRecordIndex]?.question?.map((question, recordIndex) =>
                             <QuestionCard >
                                 <FlexContainer $status={records[displayRecordIndex]?.answers[recordIndex].toString() === 'true'}>
@@ -304,50 +312,52 @@ export const CustomizedTrainingRecordScreen = observer(() => {
         </ModalContainer>
         , [records, displayRecordIndex])
 
-    return recordCount > 0 ? <Root>
-        {correctRate}
-        <RecordTable>
-            <RecordTableHeader>
-                <RowIndex>{t.customizedTrainingRecord.tableIndexTitle}</RowIndex>
-                <RowTime>{t.customizedTrainingRecord.tableTrainingTimeTitle}</RowTime>
-                <RowPercentage>{t.customizedTrainingRecord.tableCorrectTitle}</RowPercentage>
-            </RecordTableHeader>
-            <ScrollView>
-                {records?.map((it, index) => renderRecordRow(it, index))}
-            </ScrollView>
-        </RecordTable>
-        <Text></Text>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-                setModalVisible(false)
-            }}
-        >
-            {renderModalContent}
-        </Modal>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={imageModalVisible}
-            onRequestClose={() => {
-                setImageModalVisible(false)
-            }}
-        >
-            <OpacityModalContainer onPress={() => setImageModalVisible(false)}>
-                <FullSceneImage
-                    source={{
-                        uri: modalImageUrl,
-                    }}
-                    resizeMode="contain"
-                />
-            </OpacityModalContainer>
-        </Modal>
-        <Placeholder>{t.customizedTrainingRecord.selectRecordPlaceholder}</Placeholder>
-    </Root> :
-        <Root>
-            <Placeholder>{t.customizedTrainingRecord.noRecordPlaceholder}</Placeholder>
+    return recordCount > 0
+        ? <Root>
+            {correctRate}
+            <RecordTable>
+                <RecordTableHeader>
+                    <RowIndex>{t.customizedTrainingRecord.tableIndexTitle}</RowIndex>
+                    <RowTime>{t.customizedTrainingRecord.tableTrainingTimeTitle}</RowTime>
+                    <RowPercentage>{t.customizedTrainingRecord.tableCorrectTitle}</RowPercentage>
+                </RecordTableHeader>
+                <ScrollView>
+                    {records?.map((it, index) => renderRecordRow(it, index))}
+                </ScrollView>
+            </RecordTable>
+            <Text></Text>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false)
+                }}
+            >
+                {renderModalContent}
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={imageModalVisible}
+                onRequestClose={() => {
+                    setImageModalVisible(false)
+                }}
+            >
+                <OpacityModalContainer onPress={() => setImageModalVisible(false)}>
+                    <FullSceneImage
+                        source={{
+                            uri: modalImageUrl,
+                        }}
+                        resizeMode="contain"
+                    />
+                </OpacityModalContainer>
+            </Modal>
+            <Placeholder>{t.customizedTrainingRecord.selectRecordPlaceholder}</Placeholder>
         </Root>
+        :
+        <NoRecordRoot>
+            <Placeholder>{t.customizedTrainingRecord.noRecordPlaceholder}</Placeholder>
+        </NoRecordRoot>
 }
 );
