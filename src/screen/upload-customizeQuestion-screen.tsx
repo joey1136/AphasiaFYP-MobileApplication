@@ -267,8 +267,9 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     });
     if (result.didCancel) {
       showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
+    } else {
+      uploadImage(objectName, result)
     }
-    uploadImage(objectName, result, index)
   }
     , [])
 
@@ -279,8 +280,9 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     });
     if (result.didCancel) {
       showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
+    } else {
+      uploadImage(objectName, result)
     }
-    uploadImage(objectName, result, index)
   }
     , [])
 
@@ -482,7 +484,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
                     setModalImageUrl(coverImageUrl)
                   }}>{t.customizedScreen.history}</Text>
                   :
-                  <ImageHistoryUpload $warning={newQuestionModalWarning}>{t.customizedScreen.nohistory}</ImageHistoryUpload>}
+                  <ImageHistoryUpload >{t.customizedScreen.nohistory}</ImageHistoryUpload>}
                 <UploadButtonGroup>
                   <UploadIcon name="camera" onPress={() => handleTakeImage(it.title)} />
                   <UploadIcon name="upload" onPress={() => handleUploadImage(it.title)} />
