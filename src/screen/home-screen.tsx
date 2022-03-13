@@ -16,7 +16,7 @@ const Root = styled.View`
 const Card = styled(TouchableOpacity)`
   background-color:white;
   width:40%;
-  border:9px solid grey;
+  border:9px solid lightgrey;
 `
 
 const CardSet = styled.View`
@@ -35,8 +35,7 @@ const StyledImage = styled(Image)`
 
 const CardTitle = styled(Text)`
   height:25%;
-  background-color:grey;
-  color:white;
+  background-color:lightgrey;
   text-align:center;
   padding-top:6px;
   font-weight:bold;
@@ -51,6 +50,7 @@ const HelpIconContainer = styled.View`
 const HelpIcon = styled(MaterialCommunityIcon)`
   font-size:100px;
   text-align:center;
+  color:lightgrey;
 `
 
 export const HomeScreen = observer(({ navigation }) => {

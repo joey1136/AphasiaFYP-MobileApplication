@@ -48,7 +48,7 @@ export const zh = {
         answer: "答案",
         answerPlaceholder: "請輸入答案",
         image: "照片",
-        history: "歷史上傳記錄",
+        history: "點擊查看歷史上傳記錄",
         nohistory: "沒有歷史上傳記錄",
         confirm: "確定",
         new: "新增",
@@ -56,7 +56,18 @@ export const zh = {
         deleteModalTitle: "你是否確定刪除問題",
     },
     customizedTrainingRecord: {
-        title: "查看自定義訓練的結果"
+        title: "查看自定義訓練的結果",
+        correctRateTitle: "總正確率",
+        noRecordPlaceholder: "未有訓練記錄",
+        selectRecordPlaceholder: "您可以點選以上任一訓練記錄以查看詳細紀錄",
+        tableIndexTitle: "記錄",
+        tableTrainingTimeTitle: "訓練日期",
+        tableCorrectTitle: "正確率",
+        modalTitle: "訓練記錄",
+        modalAnswer: "正確答案",
+        correct: "正確",
+        wrong: "錯誤",
+        userAnswerTitle: "回答",
     },
     help: {
         title: "幫助"

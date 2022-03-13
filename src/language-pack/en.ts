@@ -56,7 +56,18 @@ export const en = {
         deleteModalTitle: "Do you confirm to delete Question",
     },
     customizedTrainingRecord: {
-        title: "Check Record for Cusomized Album Training"
+        title: "Check Record for Cusomized Album Training",
+        correctRateTitle: "Total correct rate",
+        noRecordPlaceholder: "No Training Result",
+        selectRecordPlaceholder: "You can select one of the record above to get detailed training result",
+        tableIndexTitle: "Record",
+        tableTrainingTimeTitle: "Training date, time",
+        tableCorrectTitle: "Correct rate",
+        modalTitle: "Training Record No",
+        modalAnswer: "Default answer",
+        correct: "Correct",
+        wrong: "Wrong",
+        userAnswerTitle: "User's response",
     },
     help: {
         title: "Help"
