@@ -185,7 +185,9 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
         var JsonObject = snapshot.val()
         if (JsonObject.totalQuestions != null) {
           setTotalQuestion(JsonObject.totalQuestions)
-          setQuestion(JsonObject.questions)
+          if (JsonObject.questions != null) {
+            setQuestion(JsonObject.questions)
+          }
         } if (JsonObject.instructionQuestion != null) {
           setInstructionQuestion(JsonObject.instructionQuestion)
         }
