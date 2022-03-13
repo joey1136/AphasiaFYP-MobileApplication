@@ -96,7 +96,7 @@ export const HomeScreen = observer(({ navigation }) => {
       <Card onPress={handleUploadForObject}>
         <StyledImage
           source={{
-            uri: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04",
+            uri: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Fframe_image.PNG?alt=media&token=0d519deb-0bbc-4edf-897b-f67d84784b73",
           }}
           resizeMode="contain"
         />
@@ -105,7 +105,7 @@ export const HomeScreen = observer(({ navigation }) => {
       <Card onPress={handleUploadForCustmoizedQuestions}>
         <StyledImage
           source={{
-            uri: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04",
+            uri: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Falbum_training.PNG?alt=media&token=c1af4f6c-97a9-4986-9eeb-0ffd083e8a2e",
           }}
           resizeMode="contain"
         />

@@ -36,11 +36,11 @@ export const zh = {
         title: "上傳",
         select: "選擇照片",
         takeImage: "拍照",
-        Object: [{ title: "相架", description: "請上傳放在相架裡的照片", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+        Object: [{ title: "相架", description: "請上傳放在相架裡的照片", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Fframe_image.PNG?alt=media&token=0d519deb-0bbc-4edf-897b-f67d84784b73" }],
     },
     customizedScreen: {
         title: "上傳自定義題目",
-        Object: [{ title: "相簿封面", description: "請上傳一張照片作為相簿封面", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+        Object: [{ title: "相簿封面", description: "請上傳一張照片作為相簿封面", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Falbum_cover.PNG?alt=media&token=9214d6fa-879f-4422-99e6-febefb9940e4" }],
         instructionQuestion: "訓練前的加油訊息",
         instructionQuestionDescription: "這個訊息將會於每次訓練前播放一次，預設訊息是 \"你好\"",
         question: "題目",

@@ -36,11 +36,11 @@ export const en = {
         title: "Upload",
         select: "Select",
         takeImage: "Take Picture",
-        Object: [{ title: "Photo Frame", description: "Please select your image to put on the photo frame", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+        Object: [{ title: "Photo Frame", description: "Please select your image to put on the photo frame", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Fframe_image.PNG?alt=media&token=0d519deb-0bbc-4edf-897b-f67d84784b73" }],
     },
     customizedScreen: {
         title: "Upload For Customized Album",
-        Object: [{ title: "Book Cover", description: "Please select your image to put on the Book Cover", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2FPhoto%20Frame.PNG?alt=media&token=0ff18052-9d10-499e-bfbc-aa58d1159b04" }],
+        Object: [{ title: "Book Cover", description: "Please select your image to put on the Book Cover", url: "https://firebasestorage.googleapis.com/v0/b/fyp-aphasia.appspot.com/o/sample%2Falbum_cover.PNG?alt=media&token=9214d6fa-879f-4422-99e6-febefb9940e4" }],
         instructionQuestion: "Welcome message for your family",
         instructionQuestionDescription: "This message will play at the beginning of every training. Default Message is \"Hello\"",
         question: "Question",
