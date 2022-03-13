@@ -4,6 +4,8 @@ import * as React from 'react'
 import { Text, TextInput, Button } from 'react-native'
 import { t } from '../language-pack/language'
 import auth from '@react-native-firebase/auth';
+import { showToast as showToastInPage } from '../functions/showToast'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 const Root = styled.View`
   flex : 1;
@@ -38,12 +40,13 @@ const ButtonContainer = styled.View`
   padding:10px;
 `
 
-export const LoginScreen = observer(({ navigation }) => {
+export const LoginScreen = observer(({ route, navigation }) => {
+    const { showToast } = route.params
+
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [validEmail, setValidEmail] = React.useState<Boolean>(true)
     const [ValidPassword, setValidPassword] = React.useState<Boolean>(true)
-    const [firebaseMessage, setFirebaseMessage] = React.useState("")
 
     const handleLogin = React.useCallback(() => {
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -65,19 +68,23 @@ export const LoginScreen = observer(({ navigation }) => {
 
         setValidEmail(true)
         setValidPassword(true)
-        console.log("123")
+
+        const handleRegister = () => console.log(123)
+
         auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => {
-                setFirebaseMessage(t.loginScreen.successMessage);
-                console.log("LoginSuccess")
                 navigation.pop()
+                showToast("success", t.loginScreen.successMessage)
             })
             .catch(error => {
                 if (error.code === 'auth/wrong-password') {
-                    setFirebaseMessage(t.loginScreen.wrongPasswordWarning);
-                } else {
-                    setFirebaseMessage(error.code)
+                    showToastInPage("error", t.loginScreen.wrongPasswordWarning)
+                } else if (error.code === 'auth/user-not-found') {
+                    showToastInPage("error", t.loginScreen.notRegisterWarning, handleRegister)
+                }
+                else {
+                    showToastInPage("error", error.code)
                 }
             });
 
@@ -92,7 +99,7 @@ export const LoginScreen = observer(({ navigation }) => {
                     onChangeText={setEmail}
                     value={email}
                 />
-                {validEmail === false && <WarningMessage>{t.registerScreen.successMessage}</WarningMessage>}
+                {validEmail === false && <WarningMessage>{t.loginScreen.wrongEmailWarning}</WarningMessage>}
             </InputField>
             <InputField>
                 <Title>{t.registerScreen.password}</Title>
@@ -105,7 +112,7 @@ export const LoginScreen = observer(({ navigation }) => {
             <ButtonContainer>
                 <Button title={t.profileScreen.login} onPress={handleLogin} />
             </ButtonContainer>
-            <WarningMessage>{firebaseMessage}</WarningMessage>
+            <Toast />
         </Root>
     );
 

@@ -8,6 +8,8 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import { firebase } from '@react-native-firebase/database';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Toast from 'react-native-toast-message';
+import { showToast as showToastInPage } from '../functions/showToast'
 
 interface Question {
   question: string
@@ -58,16 +60,6 @@ const UploadObjectImage = styled(Image)`
   width:100%;
   height:200px;
   justify-content : center;
-`
-
-const SuccessMessage = styled(Text)`
-  color:green;
-  text-align:center;
-`
-
-const WarningMessage = styled(Text)`
-  color:red;
-  text-align:center;
 `
 
 const QuestionInputContainer = styled.View`
@@ -159,9 +151,11 @@ const UploadIcon = styled(MaterialCommunityIcon)`
   padding-left:10px;
 `
 
-export const CustomizedScreen = observer(({ navigation }) => {
+export const CustomizedScreen = observer(({ route, navigation }) => {
+  const { showToast } = route.params
+
   const [totalQuestion, setTotalQuestion] = React.useState(0)
-  const [question, setQuestion] = React.useState(undefined)
+  const [question, setQuestion] = React.useState([])
   const [instructionQuestion, setInstructionQuestion] = React.useState(undefined)
   const [coverImageUrl, setCoverImageUrl] = React.useState(undefined)
   const [modalImageUrl, setModalImageUrl] = React.useState(undefined);
@@ -172,8 +166,6 @@ export const CustomizedScreen = observer(({ navigation }) => {
 
   const [newQuestionModalWarning, setNewQuestionModalWarning] = React.useState(false);
   const [warning, setWarning] = React.useState(false);
-  const [warningMessage, setWarningMessage] = React.useState(undefined)
-  const [successMessage, setSuccessMessage] = React.useState(undefined)
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [addQuestionModalVisible, setAddQuestionModalVisible] = React.useState(false);
@@ -191,16 +183,18 @@ export const CustomizedScreen = observer(({ navigation }) => {
     const code = reference.once('value')
       .then(snapshot => {
         var JsonObject = snapshot.val()
-        if (JsonObject.totalQuestions != 0) {
+        if (JsonObject.totalQuestions != null) {
           setTotalQuestion(JsonObject.totalQuestions)
           setQuestion(JsonObject.questions)
+        } if (JsonObject.instructionQuestion != null) {
+          setInstructionQuestion(JsonObject.instructionQuestion)
         }
-        setInstructionQuestion(JsonObject.instructionQuestion)
-        setCoverImageUrl(JsonObject.coverImageLink)
+        if (JsonObject.coverImageLink != null) {
+          setCoverImageUrl(JsonObject.coverImageLink)
+        }
       });
     return
   }, []);
-
 
   const UpdateQuestion = React.useCallback((index: number, item: "quesiton" | "answer" | "url", value: string) => {
     if (question == null) return
@@ -242,14 +236,16 @@ export const CustomizedScreen = observer(({ navigation }) => {
   const UploadQuestions = React.useCallback(() => {
     const user = auth().currentUser
     if (!user) {
-      setWarningMessage("Please first Login before upload")
-      setSuccessMessage(undefined)
+      showToastInPage("error", t.toastMessage.error.loginErrorMessage)
       return
     }
     if (question == null) return
     const reference = firebase
       .app().database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
       .ref(`/customizedQuestion/${user.uid}`);
+
+    const onHide = () => navigation.pop()
+
     reference.set({
       coverImageLink: coverImageUrl,
       instructionQuestion: instructionQuestion,
@@ -257,8 +253,7 @@ export const CustomizedScreen = observer(({ navigation }) => {
       questions: question
     })
       .then(() => {
-        console.log('Data set.')
-        navigation.pop()
+        showToast("success", t.toastMessage.success.dataSetSuccessMessage, 2000, onHide, onHide)
       });
   }, [question, coverImageUrl, instructionQuestion])
 
@@ -268,7 +263,9 @@ export const CustomizedScreen = observer(({ navigation }) => {
       mediaType: 'photo',
       includeBase64: false,
     });
-    if (result.didCancel) return
+    if (result.didCancel) {
+      showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
+    }
     uploadImage(objectName, result, index)
   }
     , [])
@@ -278,7 +275,9 @@ export const CustomizedScreen = observer(({ navigation }) => {
       mediaType: 'photo',
       includeBase64: false,
     });
-    if (result.didCancel) return
+    if (result.didCancel) {
+      showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
+    }
     uploadImage(objectName, result, index)
   }
     , [])
@@ -286,8 +285,7 @@ export const CustomizedScreen = observer(({ navigation }) => {
   const uploadImage = React.useCallback(async (objectName: string, Image: ImagePickerResponse, index?: number) => {
     const user = auth().currentUser
     if (!user) {
-      setWarningMessage("Please first Login before upload")
-      setSuccessMessage(undefined)
+      showToastInPage("error", t.toastMessage.error.loginErrorMessage)
       return
     }
     const date = (new Date()).toLocaleDateString().split('/').join('-') + "_" + (new Date()).toLocaleTimeString().split('/').join('-');
@@ -305,9 +303,7 @@ export const CustomizedScreen = observer(({ navigation }) => {
         }
       }
     }
-
-    setSuccessMessage(`${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
-    setWarningMessage(undefined)
+    showToastInPage("success", `${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
   }
     , [])
 
@@ -417,7 +413,7 @@ export const CustomizedScreen = observer(({ navigation }) => {
             if (newQuestion == null || newQuestionAnswer == null || newQuestionImagsUrl == null) {
               setNewQuestionModalWarning(true)
             } else {
-              var addQuestionSet = { question: newQuestion, answer: newQuestionAnswer, imageLink: newQuestionImagsUrl }
+              var addQuestionSet = { "question": newQuestion, "answer": newQuestionAnswer, "imageLink": newQuestionImagsUrl }
               var newQuestionSet = [...question]
               newQuestionSet.push(addQuestionSet)
               setQuestion(newQuestionSet)
@@ -465,8 +461,6 @@ export const CustomizedScreen = observer(({ navigation }) => {
             <SaveIcon name="content-save" />
           </SaveButton>
         </SaveButtonContainer>
-        {warningMessage != null && <WarningMessage>{warningMessage}</WarningMessage>}
-        {successMessage != null && <SuccessMessage>{successMessage}</SuccessMessage>}
         {Objects.map((it) =>
           <UploadCard>
             <UploadObjectTitle>{it.title}</UploadObjectTitle>
@@ -542,8 +536,7 @@ export const CustomizedScreen = observer(({ navigation }) => {
     >
       {renderDeleteQuestionModalContent}
     </Modal>
+    <Toast />
   </SafeAreaView>
-
-
 }
 );

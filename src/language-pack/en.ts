@@ -9,6 +9,8 @@ export const en = {
         title: "Login Page",
         successMessage: "User account signed in!",
         wrongPasswordWarning: "Wrong Password!",
+        wrongEmailWarning: "This is not a valid Email Address",
+        notRegisterWarning: "This email have not been registered",
     },
     registerScreen: {
         title: "Register Page",
@@ -17,7 +19,8 @@ export const en = {
         successMessage: "User account created & signed in!",
         duplicatedEmailWarning: "That email address is already in use!",
         nonValidEmailWarning: "This is not a valid Email Address",
-        nonValidPasswordWarning: "This is not a valid Password"
+        nonValidPasswordWarning: "This is not a valid Password",
+        fullAccountWarning: "Sorry, the account creatation limit has expired, please contact staff",
     },
     profileScreen: {
         title: "Profile",
@@ -26,7 +29,8 @@ export const en = {
         loginHints: "Please Login",
         login: "Login",
         register: "Register",
-        logout: "Logout"
+        logout: "Logout",
+        logoutSuccessMessage: "Logout Successfully",
     },
     uploadScreen: {
         title: "Upload",
@@ -56,5 +60,16 @@ export const en = {
     },
     help: {
         title: "Help"
+    },
+    toastMessage: {
+        error: {
+            title: "Error",
+            loginErrorMessage: "Please first Login before upload",
+            uploadCancelMessage: "Upload cancelled",
+        },
+        success: {
+            title: "Success",
+            dataSetSuccessMessage: "Question uploaded successfullly",
+        }
     }
 }

@@ -5,6 +5,8 @@ import { Text, Button, TouchableOpacity, Image } from 'react-native';
 import { t } from '../language-pack/language'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
+import { showToast } from '../functions/showToast';
 
 const Root = styled.View`
   flex : 1;
@@ -38,7 +40,6 @@ const CardTitle = styled(Text)`
   text-align:center;
   padding-top:6px;
   font-weight:bold;
-  vertical-align: middle;
 `
 
 const HelpIconContainer = styled.View`
@@ -53,9 +54,9 @@ const HelpIcon = styled(MaterialCommunityIcon)`
 `
 
 export const HomeScreen = observer(({ navigation }) => {
-  const user = React.useMemo(() => auth().currentUser, [])
 
   const handleUploadForObject = React.useCallback(() => {
+    const user = auth().currentUser
     if (user == null) {
       navigation.navigate(t.profileScreen.title)
     } else {
@@ -65,15 +66,17 @@ export const HomeScreen = observer(({ navigation }) => {
     , [])
 
   const handleUploadForCustmoizedQuestions = React.useCallback(() => {
+    const user = auth().currentUser
     if (user == null) {
       navigation.navigate(t.profileScreen.title)
     } else {
-      navigation.navigate("HomePages", { screen: t.customizedScreen.title })
+      navigation.navigate("HomePages", { screen: t.customizedScreen.title, params: { showToast } })
     }
   }
     , [])
 
   const handleCheckRecord = React.useCallback(() => {
+    const user = auth().currentUser
     if (user == null) {
       navigation.navigate(t.profileScreen.title)
     } else {
@@ -115,13 +118,14 @@ export const HomeScreen = observer(({ navigation }) => {
         </HelpIconContainer>
         <CardTitle>{t.homeScreen.record}</CardTitle>
       </Card>
-      <Card onPress={handleHelp}>
+      <Card onPress={() => showToast("error", "123")}>
         <HelpIconContainer>
           <HelpIcon name="help-circle" />
         </HelpIconContainer>
         <CardTitle>{t.help.title}</CardTitle>
       </Card>
     </CardSet>
+    <Toast />
   </Root>
 }
 );

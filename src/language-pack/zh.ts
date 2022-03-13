@@ -9,6 +9,8 @@ export const zh = {
         title: "登入",
         successMessage: "已經成功登入!",
         wrongPasswordWarning: "密碼錯誤!",
+        wrongEmailWarning: "請輸入有效電郵地址!",
+        notRegisterWarning: "這個電郵地址尚未註冊! 你可以按此註冊此電郵地址",
     },
     registerScreen: {
         title: "註冊",
@@ -17,7 +19,8 @@ export const zh = {
         successMessage: "已經成功註冊及登入!",
         duplicatedEmailWarning: "這個電郵地址已經被使用!",
         nonValidEmailWarning: "這不是正確電郵地址格式",
-        nonValidPasswordWarning: "密碼必須包含至少6個字元"
+        nonValidPasswordWarning: "密碼必須包含至少6個字元",
+        fullAccountWarning: "很抱歉，現在帳戶建立數目已超過上限，請向工作人員查詢",
     },
     profileScreen: {
         title: "我的帳戶",
@@ -26,8 +29,8 @@ export const zh = {
         loginHints: "請先登入或註冊",
         login: "登入",
         register: "註冊",
-        logout: "登出"
-
+        logout: "登出",
+        logoutSuccessMessage: "你已經成功登出",
     },
     uploadScreen: {
         title: "上傳",
@@ -57,5 +60,16 @@ export const zh = {
     },
     help: {
         title: "幫助"
+    },
+    toastMessage: {
+        error: {
+            title: "錯誤",
+            loginErrorMessage: "請先登入",
+            uploadCancelMessage: "上載中止",
+        },
+        success: {
+            title: "成功",
+            dataSetSuccessMessage: "題目已上載成功",
+        }
     }
 }
