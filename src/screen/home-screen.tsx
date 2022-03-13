@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react'
 import styled from 'styled-components'
 import * as React from 'react';
-import { Text, Button, TouchableOpacity, Image } from 'react-native';
+import { Text, TouchableOpacity, Image } from 'react-native';
 import { t } from '../language-pack/language'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import auth from '@react-native-firebase/auth';
@@ -45,6 +45,7 @@ const HelpIconContainer = styled.View`
   height:75%;
   display:flex;
   justify-content:center;
+  align-items:center;
 `
 
 const HelpIcon = styled(MaterialCommunityIcon)`
@@ -114,11 +115,11 @@ export const HomeScreen = observer(({ navigation }) => {
     <CardSet>
       <Card onPress={handleCheckRecord}>
         <HelpIconContainer>
-          <HelpIcon name="help-circle" />
+          <HelpIcon name="clipboard-list-outline" />
         </HelpIconContainer>
         <CardTitle>{t.homeScreen.record}</CardTitle>
       </Card>
-      <Card onPress={() => showToast("error", "123")}>
+      <Card onPress={handleHelp}>
         <HelpIconContainer>
           <HelpIcon name="help-circle" />
         </HelpIconContainer>
