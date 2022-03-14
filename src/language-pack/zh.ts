@@ -70,7 +70,7 @@ export const zh = {
         userAnswerTitle: "回答",
     },
     help: {
-        title: "幫助"
+        title: "如何使用此應用程式"
     },
     toastMessage: {
         error: {
