@@ -70,7 +70,10 @@ export const zh = {
         userAnswerTitle: "回答",
     },
     help: {
-        title: "如何使用此應用程式"
+        title: "如何使用此應用程式",
+        demo1Title: "口語理解訓練及認知訓練示範影片",
+        demo2Title: "自定義訓練示範影片",
+        userManualTitle: "使用說明書",
     },
     toastMessage: {
         error: {

@@ -70,7 +70,10 @@ export const en = {
         userAnswerTitle: "User's response",
     },
     help: {
-        title: "How to use this application"
+        title: "How to use this application",
+        demo1Title: "Computerized Training Demo Video",
+        demo2Title: "Cusomized Album Training Demo Video",
+        userManualTitle: "User Manual",
     },
     toastMessage: {
         error: {
