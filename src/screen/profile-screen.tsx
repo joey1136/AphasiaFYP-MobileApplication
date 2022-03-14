@@ -54,13 +54,13 @@ export const ProfileScreen = observer(({ navigation }) => {
 
   const handleLogin = React.useCallback(() => {
     setLoginCode(undefined)
-    navigation.navigate("ProfilePages", { screen: t.profileScreen.login, params: { showToast } })
+    navigation.navigate("ProfilePages", { screen: t.profileScreen.login, params: { showToast, setLoginCode } })
   }
     , [])
 
   const handleRegister = React.useCallback(() => {
     setLoginCode(undefined)
-    navigation.navigate("ProfilePages", { screen: t.profileScreen.register, params: { showToast } })
+    navigation.navigate("ProfilePages", { screen: t.profileScreen.register, params: { showToast, setLoginCode } })
   }
     , [])
 

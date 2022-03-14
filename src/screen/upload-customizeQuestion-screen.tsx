@@ -268,7 +268,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     if (result.didCancel) {
       showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
     } else {
-      uploadImage(objectName, result)
+      uploadImage(objectName, result, index)
     }
   }
     , [])
@@ -281,7 +281,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     if (result.didCancel) {
       showToastInPage("error", t.toastMessage.error.uploadCancelMessage)
     } else {
-      uploadImage(objectName, result)
+      uploadImage(objectName, result, index)
     }
   }
     , [])
@@ -309,7 +309,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     }
     showToastInPage("success", `${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
   }
-    , [])
+    , [totalQuestion])
 
   const renderQuestionsCard = React.useMemo(() => question?.map((it, index) =>
     <UploadCard>

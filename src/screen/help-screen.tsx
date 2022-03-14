@@ -5,7 +5,10 @@ import styled from 'styled-components';
 
 
 const Root = styled.View`
-
+    height:100%;
+    align-items:center;
+    flex:1;
+    justify-content:center;
 `
 
 export const HelpScreen = observer(() => {

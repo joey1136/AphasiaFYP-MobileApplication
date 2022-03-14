@@ -160,7 +160,7 @@ export const UploadScreen = observer(({ navigation }) => {
       frameImageLink: link
     })
       .then(() => {
-        showToastInPage("success", t.toastMessage.success.dataSetSuccessMessage)
+        showToastInPage("success", `${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
       });
   }
     , [])

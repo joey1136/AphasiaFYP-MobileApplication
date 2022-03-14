@@ -6,6 +6,7 @@ import { t } from '../language-pack/language'
 import auth from '@react-native-firebase/auth';
 import { showToast as showToastInPage } from '../functions/showToast'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import { firebase } from '@react-native-firebase/database'
 
 const Root = styled.View`
   flex : 1;
@@ -41,7 +42,7 @@ const ButtonContainer = styled.View`
 `
 
 export const LoginScreen = observer(({ route, navigation }) => {
-    const { showToast } = route.params
+    const { showToast, setLoginCode } = route.params
 
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
@@ -69,7 +70,49 @@ export const LoginScreen = observer(({ route, navigation }) => {
         setValidEmail(true)
         setValidPassword(true)
 
-        const handleRegister = () => console.log(123)
+        const handleRegister = () => {
+            auth()
+                .createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    const reference = firebase
+                        .app()
+                        .database('https://fyp-aphasia-default-rtdb.asia-southeast1.firebasedatabase.app/')
+                        .ref(`/accountRecord`);
+
+                    const code = reference.once('value')
+                        .then(snapshot => {
+                            var unityCode = Math.floor(Math.random() * 899 + 100)
+                            var JsonObject = snapshot.val()
+
+                            if (JsonObject.length >= 999) {
+                                showToastInPage("error", t.registerScreen.fullAccountWarning)
+                            } else {
+                                var duplicatedCode = JsonObject.filter((it) => it.code === unityCode)
+                                while (duplicatedCode.length > 0) {
+                                    unityCode = Math.floor(Math.random() * 899 + 100)
+                                    var duplicatedCode = JsonObject.filter((it) => it.code === unityCode)
+                                }
+                                const user = auth().currentUser
+                                setLoginCode(unityCode)
+                                JsonObject.push({ "code": `${unityCode}`, "id": `${user.uid}` })
+
+                                reference.set(JsonObject)
+                                    .then(() => {
+                                        navigation.pop()
+                                        showToast("success", t.registerScreen.successMessage)
+                                    });
+                            }
+
+                        });
+                })
+                .catch(error => {
+                    if (error.code === 'auth/email-already-in-use') {
+                        showToastInPage("error", t.registerScreen.duplicatedEmailWarning)
+                    } else {
+                        showToastInPage("error", error.code)
+                    }
+                });
+        }
 
         auth()
             .signInWithEmailAndPassword(email, password)
@@ -81,7 +124,7 @@ export const LoginScreen = observer(({ route, navigation }) => {
                 if (error.code === 'auth/wrong-password') {
                     showToastInPage("error", t.loginScreen.wrongPasswordWarning)
                 } else if (error.code === 'auth/user-not-found') {
-                    showToastInPage("error", t.loginScreen.notRegisterWarning, handleRegister)
+                    showToastInPage("error", t.loginScreen.notRegisterWarning, undefined, handleRegister)
                 }
                 else {
                     showToastInPage("error", error.code)

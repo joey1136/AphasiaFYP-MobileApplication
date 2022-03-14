@@ -41,7 +41,7 @@ const ButtonContainer = styled.View`
 `
 
 export const RegisterScreen = observer(({ route, navigation }) => {
-    const { showToast } = route.params
+    const { showToast, setLoginCode } = route.params
 
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
@@ -90,6 +90,7 @@ export const RegisterScreen = observer(({ route, navigation }) => {
                                 var duplicatedCode = JsonObject.filter((it) => it.code === unityCode)
                             }
                             const user = auth().currentUser
+                            setLoginCode(unityCode)
                             JsonObject.push({ "code": `${unityCode}`, "id": `${user.uid}` })
 
                             reference.set(JsonObject)
