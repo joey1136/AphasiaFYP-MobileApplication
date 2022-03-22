@@ -120,7 +120,7 @@ export const RegisterScreen = observer(({ route, navigation }) => {
                     onChangeText={setEmail}
                     value={email}
                 />
-                {validEmail === false && <WarningMessage>{t.registerScreen.successMessage}</WarningMessage>}
+                {validEmail === false && <WarningMessage>{t.registerScreen.nonValidEmailWarning}</WarningMessage>}
             </InputField>
             <InputField>
                 <Title>{t.registerScreen.password}</Title>
