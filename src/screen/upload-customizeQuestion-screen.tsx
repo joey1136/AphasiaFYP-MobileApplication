@@ -172,7 +172,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
   const [deleteQuestionModalVisible, setDeleteQuestionModalVisible] = React.useState(false);
 
   const [deleteQuestionIndex, setDeleteQuestionIndex] = React.useState(undefined);
-
+  console.log(question, totalQuestion)
   React.useEffect(() => {
     const user = auth().currentUser
     if (user == null) return
@@ -202,7 +202,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     if (question == null) return
     if (index > totalQuestion) return
 
-    var newQuestion = [...question]
+    var newQuestion = question.map((it) => it)
     if (item === "quesiton") {
       newQuestion[index].question = value
     } else if (item === "answer") {
@@ -211,7 +211,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
       newQuestion[index].imageLink = value
     }
     setQuestion(newQuestion)
-  }, [question])
+  }, [question, totalQuestion])
 
   const DeleteQuestion = React.useCallback((index: number) => {
     if (question == null) return
@@ -220,6 +220,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     setQuestion(newQuestion)
   }, [question])
 
+  // TODO https://reactnavigation.org/docs/preventing-going-back/
   const CheckQuestion = React.useCallback(() => {
     var isWarning = false;
     question?.forEach((it) => {
@@ -271,7 +272,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
       uploadImage(objectName, result, index)
     }
   }
-    , [])
+    , [totalQuestion, question])
 
   const handleTakeImage = React.useCallback(async (objectName: string, index?: number) => {
     const result = await launchCamera({
@@ -284,7 +285,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
       uploadImage(objectName, result, index)
     }
   }
-    , [])
+    , [totalQuestion, question])
 
   const uploadImage = React.useCallback(async (objectName: string, Image: ImagePickerResponse, index?: number) => {
     const user = auth().currentUser
@@ -309,7 +310,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
     }
     showToastInPage("success", `${t.customizedScreen.image}:${objectName}${t.customizedScreen.uploadSuccess}`)
   }
-    , [totalQuestion])
+    , [totalQuestion, question])
 
   const renderQuestionsCard = React.useMemo(() => question?.map((it, index) =>
     <UploadCard>
@@ -356,7 +357,7 @@ export const CustomizedScreen = observer(({ route, navigation }) => {
       </QuestionInputContainer>
     </UploadCard>
   )
-    , [question])
+    , [question, totalQuestion])
 
   const renderModalContent = React.useMemo(() =>
     <FullSceneImage
